@@ -1,0 +1,33 @@
+{
+  "name": "aurora_map_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peggalex/aurora_map_backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/peggalex/aurora_map_backend/issues"
+  },
+  "homepage": "https://github.com/peggalex/aurora_map_backend#readme",
+  "dependencies": {
+    "cron": "^3.1.7",
+    "cron-time": "^1.1.1",
+    "cron-time-generator": "^2.0.3",
+    "express": "^4.21.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/geojson": "^7946.0.14",
+    "@types/node": "^22.7.5",
+    "typescript": "^5.6.3"
+  }
+}
