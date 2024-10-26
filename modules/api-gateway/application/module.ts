@@ -2,18 +2,19 @@ import { CronJob } from "cron";
 import { CronTime } from "cron-time-generator";
 
 export class AuroraForecastDataModule {
-	private static singleton:
-		| { type: "NOT_INITIALIZED" }
-		| { type: "INITIALIZING" }
-		| { type: "INITIALIZED"; instance: AuroraForecastDataModule } = {
-		type: "NOT_INITIALIZED",
-	};
+  private static singleton:
+    | { type: "NOT_INITIALIZED" }
+    | { type: "INITIALIZING" }
+    | { type: "INITIALIZED"; instance: AuroraForecastDataModule } = {
+    type: "NOT_INITIALIZED",
+  };
 
-	private constructor() {}
+  private constructor() {}
 
-	/**
-	 * Initialize module instance
-	 */
+  /**
+   * Initialize module instance
+   */
+  /*
 	static async init() {
 		if (AuroraForecastDataModule.singleton.type !== "NOT_INITIALIZED") {
 			throw Error(
@@ -70,4 +71,5 @@ export class AuroraForecastDataModule {
 	getLatestAuroraForecast() {
 		return this.getAuroraForecastQuery.execute({});
 	}
+		*/
 }
