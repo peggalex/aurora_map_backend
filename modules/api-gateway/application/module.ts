@@ -1,75 +1,66 @@
-import { CronJob } from "cron";
-import { CronTime } from "cron-time-generator";
+import express, { Express, Request, Response } from "express";
+import { AuroraForecastDataModule } from "../../aurora-forecast-data/application/module";
+import { IAuroraForecastDataModuleApi } from "../../aurora-forecast-data/application/module-api";
 
-export class AuroraForecastDataModule {
+export class ApiGatewayModule {
   private static singleton:
     | { type: "NOT_INITIALIZED" }
     | { type: "INITIALIZING" }
-    | { type: "INITIALIZED"; instance: AuroraForecastDataModule } = {
+    | { type: "INITIALIZED"; instance: ApiGatewayModule } = {
     type: "NOT_INITIALIZED",
   };
 
-  private constructor() {}
+  private constructor(private app: Express) {}
 
   /**
    * Initialize module instance
    */
-  /*
-	static async init() {
-		if (AuroraForecastDataModule.singleton.type !== "NOT_INITIALIZED") {
-			throw Error(
-				`Already started initializing AuroraForecastDataModule`
-			);
-		}
-		AuroraForecastDataModule.singleton = {
-			type: "INITIALIZING",
-		};
-		const instance = await AuroraForecastDataModule.createInstance();
-		AuroraForecastDataModule.singleton = {
-			type: "INITIALIZED",
-			instance,
-		};
-		return instance;
-	}
+  static async init(auroraForecastDataModule: IAuroraForecastDataModuleApi) {
+    if (ApiGatewayModule.singleton.type !== "NOT_INITIALIZED") {
+      throw Error(`Already started initializing AuroraForecastDataModule`);
+    }
+    ApiGatewayModule.singleton = {
+      type: "INITIALIZING",
+    };
+    const instance = await ApiGatewayModule.createInstance(
+      auroraForecastDataModule
+    );
+    ApiGatewayModule.singleton = {
+      type: "INITIALIZED",
+      instance,
+    };
+    return instance;
+  }
 
-	private static async createInstance(): Promise<AuroraForecastDataModule> {
-		const logger = {
-			info: (msg: string) =>
-				console.log(`[${new Date().toLocaleTimeString()}] ${msg}`),
-		};
+  private static async createInstance(
+    auroraForecastDataModule: IAuroraForecastDataModuleApi
+  ): Promise<ApiGatewayModule> {
+    const logger = {
+      info: (msg: string) =>
+        console.log(`[${new Date().toLocaleTimeString()}] ${msg}`),
+    };
 
-		const app: Express = express();
-		const port = 3000;
+    const app: Express = express();
+    const port = 3000;
 
-		app.get("/", (req: Request, res: Response) => {
-			res.send("Express + TypeScript Server");
-		});
+    app.get("/", (req: Request, res: Response) => {
+      res.send("Express + TypeScript Server");
+    });
 
-		app.listen(port, () => {
-			console.log(
-				`[server]: Server is running at http://localhost:${port}`
-			);
-		});
+    app.get(
+      "/get-current-aurora-forecast",
+      async (req: Request, res: Response) => {
+        const currentAuroraForecast =
+          await auroraForecastDataModule.getCurrentAuroraForecast();
+        res.json(currentAuroraForecast);
+        res.status(currentAuroraForecast === null ? 404 : 200);
+      }
+    );
 
-		setTimeout(() => {
-			const dataPullJob = modules.AuroraForecastData.getDataPullJob();
-			console.log({
-				lastExecuted: dataPullJob.lastExecution,
-			});
-		}, 5000);
+    app.listen(port, () => {
+      console.log(`[server]: Server is running at http://localhost:${port}`);
+    });
 
-		return new AuroraForecastDataModule(
-			dataPullJob,
-			new GetAuroraForecastQuery(auroraForecastRepository)
-		);
-	}
-
-	getDataPullJob() {
-		return this.dataPullJob;
-	}
-
-	getLatestAuroraForecast() {
-		return this.getAuroraForecastQuery.execute({});
-	}
-		*/
+    return new ApiGatewayModule(app);
+  }
 }
