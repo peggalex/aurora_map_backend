@@ -21,7 +21,7 @@ export class AuroraNoaaData {
 		this.coordinates = props.coordinates.map((coord) => {
 			// "Data Format": "[Longitude, Latitude, Aurora]"
 			const [long360, lat, aurora] = coord;
-			const long180 = long360 > 180 ? long360 - 180 : long360;
+			const long180 = long360 > 180 ? long360 - 360 : long360;
 			return { long180, lat, aurora };
 		});
 	}
