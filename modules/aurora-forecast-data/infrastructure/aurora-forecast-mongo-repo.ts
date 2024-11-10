@@ -63,4 +63,24 @@ export class AuroraForecastMongoRepository
 			return this.fromDocument(document);
 		});
 	}
+
+	async getAuroraForecastsSinceDate(
+		startDate: Date
+	): Promise<AuroraForecast[]> {
+		return this.connectToDB(async (collection) => {
+			const documents = await collection
+				.find(
+					{
+						forecastTime: { $gte: startDate },
+					},
+					{
+						sort: {
+							_id: 1,
+						},
+					}
+				)
+				.toArray();
+			return documents.map((doc) => this.fromDocument(doc));
+		});
+	}
 }

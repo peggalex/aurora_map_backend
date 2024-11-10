@@ -1,7 +1,7 @@
 import { AuroraForecast } from "./aurora-forecast";
 
 export interface IAuroraForecastRepository {
-  saveAuroraForecast(aggregate: AuroraForecast): Promise<void>;
-  getLatestAuroraForecast(): Promise<AuroraForecast | null>;
-  getMostCurrentAuroraForecast(): Promise<AuroraForecast | null>;
+	saveAuroraForecast(aggregate: AuroraForecast): Promise<void>;
+	getMostCurrentAuroraForecast(): Promise<AuroraForecast | null>;
+	getAuroraForecastsSinceDate(startDate: Date): Promise<AuroraForecast[]>;
 }

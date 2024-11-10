@@ -4,6 +4,12 @@ import { CronTime } from "cron-time-generator";
 import { AuroraForecastMongoRepository } from "./infrastructure/aurora-forecast-mongo-repo";
 import { GetCurrentAuroraForecastQuery } from "./application/queries/get-current-aurora-forecast";
 import { IAuroraForecastDataModuleApi } from "./module-api";
+import { ReadAuroraForecastTimeSeries } from "./application/read-models";
+import {
+	GetAuroraForecastForLocationQuery,
+	GetAuroraForecastForLocationRequest,
+} from "./application/queries/get-aurora-forecast-for-location";
+import { AuroraChanceForLocationService } from "./domain/services/aurora-chance-for-location";
 
 export class AuroraForecastDataModule implements IAuroraForecastDataModuleApi {
 	private static singleton:
@@ -15,7 +21,8 @@ export class AuroraForecastDataModule implements IAuroraForecastDataModuleApi {
 
 	private constructor(
 		private dataPullJob: CronJob<any, any>,
-		private getAuroraForecastQuery: GetCurrentAuroraForecastQuery
+		private getAuroraForecastQuery: GetCurrentAuroraForecastQuery,
+		private getAuroraForecastForLocationQuery: GetAuroraForecastForLocationQuery
 	) {}
 
 	/**
@@ -62,9 +69,16 @@ export class AuroraForecastDataModule implements IAuroraForecastDataModuleApi {
 			true // start
 		);
 
+		const auroraChanceForLocationService =
+			new AuroraChanceForLocationService();
+
 		return new AuroraForecastDataModule(
 			dataPullJob,
-			new GetCurrentAuroraForecastQuery(auroraForecastRepository)
+			new GetCurrentAuroraForecastQuery(auroraForecastRepository),
+			new GetAuroraForecastForLocationQuery(
+				auroraForecastRepository,
+				auroraChanceForLocationService
+			)
 		);
 	}
 
@@ -74,5 +88,9 @@ export class AuroraForecastDataModule implements IAuroraForecastDataModuleApi {
 
 	getCurrentAuroraForecast() {
 		return this.getAuroraForecastQuery.execute({});
+	}
+
+	getAuroraForecastForLocation(request: GetAuroraForecastForLocationRequest) {
+		return this.getAuroraForecastForLocationQuery.execute(request);
 	}
 }

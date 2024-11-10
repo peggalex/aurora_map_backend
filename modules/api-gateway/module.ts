@@ -5,6 +5,7 @@ import { GetCurrentWeatherForecastRequest } from "./domain/value-objects/get-cur
 import cors from "cors";
 import { ILocationLookupApi as ILocationLookupModuleApi } from "../location-lookup/module-api";
 import { AutoCompleteLocationSearchRequest } from "./domain/value-objects/auto-complete-location-search-request";
+import { GetAuroraChanceForLocationRequest } from "./domain/value-objects/get-aurora-chance-for-location-request";
 
 export class ApiGatewayModule {
 	private static singleton:
@@ -111,6 +112,30 @@ export class ApiGatewayModule {
 							searchTerm: request.searchTerm,
 						});
 					res.json(autoCompleteLocations);
+					res.status(200);
+				} catch (e) {
+					next(e);
+				}
+			}
+		);
+
+		app.get(
+			"/aurora-chance-for-location",
+			async (req: Request, res: Response, next: NextFunction) => {
+				try {
+					console.log(req.query);
+					const request = GetAuroraChanceForLocationRequest.fromRaw(
+						req.query as any
+					);
+					const auroraForecastForLocation =
+						await auroraForecastDataModule.getAuroraForecastForLocation(
+							{
+								lat: request.lat,
+								long: request.long,
+								startDate: request.timestamp.valueOf(),
+							}
+						);
+					res.json(auroraForecastForLocation);
 					res.status(200);
 				} catch (e) {
 					next(e);

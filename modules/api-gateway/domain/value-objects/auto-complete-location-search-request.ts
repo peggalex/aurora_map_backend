@@ -5,7 +5,7 @@ const schema = z.object({
 });
 
 /**
- * Value object for get current weather forecast request
+ * Value object for auto-complete location search request
  */
 export class AutoCompleteLocationSearchRequest {
 	private constructor(private props: output<typeof schema>) {}
