@@ -1,5 +1,5 @@
 import { CronJob } from "cron";
-import { DataPullProcesser } from "./application/jobs/pull-data-processor";
+import { DataPullProcessor } from "./application/jobs/pull-data-processor";
 import { CronTime } from "cron-time-generator";
 import { AuroraForecastMongoRepository } from "./infrastructure/aurora-forecast-mongo-repo";
 import { GetCurrentAuroraForecastQuery } from "./application/queries/get-current-aurora-forecast";
@@ -49,6 +49,8 @@ export class AuroraForecastDataModule implements IAuroraForecastDataModuleApi {
 		const logger = {
 			info: (msg: string) =>
 				console.log(`[${new Date().toLocaleTimeString()}] ${msg}`),
+			error: (msg: string) =>
+				console.error(`[${new Date().toLocaleTimeString()}] ${msg}`),
 		};
 		const mongoConnectionStr = process.env.MONGO_CONNECTION_STR;
 		if (!mongoConnectionStr) {
@@ -57,7 +59,7 @@ export class AuroraForecastDataModule implements IAuroraForecastDataModuleApi {
 		const auroraForecastRepository =
 			await AuroraForecastMongoRepository.init(mongoConnectionStr);
 
-		const dataPullProcess = new DataPullProcesser(
+		const dataPullProcess = new DataPullProcessor(
 			auroraForecastRepository,
 			logger
 		);

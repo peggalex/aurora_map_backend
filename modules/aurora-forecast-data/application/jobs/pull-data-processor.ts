@@ -1,11 +1,14 @@
 import { IAuroraForecastRepository } from "../../domain/aurora-forecast-repository";
 import { AuroraNoaaData } from "../../domain/value-objects/aurora-noaa-data";
-import { NoaaToGeoJsonService } from "../../domain/services/nooa-to-geojson-service";
+import { GeoJsonService } from "../../domain/services/geojson-service";
 
-export class DataPullProcesser {
+export class DataPullProcessor {
 	constructor(
 		private auroraForecastRepository: IAuroraForecastRepository,
-		private logger: { info: (msg: string) => void }
+		private logger: {
+			info: (msg: string) => void;
+			error: (msg: string) => void;
+		}
 	) {}
 
 	async process(attempt = 1): Promise<void> {
@@ -28,7 +31,9 @@ export class DataPullProcesser {
 			if (attempt < 3) {
 				return await this.process(attempt + 1);
 			} else {
-				throw Error(`Failed after ${attempt} attempts`);
+				//throw Error(`Failed after ${attempt} attempts`);
+				this.logger.error(`Failed to fetch after ${attempt} attempts`);
+				return;
 			}
 		}
 		this.logger.info("\t...fetched");
@@ -36,7 +41,7 @@ export class DataPullProcesser {
 		const data = await result.response.json();
 		this.logger.info("Parsing data from NOAA...");
 		const noaaData = AuroraNoaaData.fromRaw(data);
-		const auroraForecast = new NoaaToGeoJsonService().convert(noaaData);
+		const auroraForecast = new GeoJsonService().fromNoaaData(noaaData);
 		this.logger.info("\t...parsed");
 		this.auroraForecastRepository.saveAuroraForecast(auroraForecast);
 	}

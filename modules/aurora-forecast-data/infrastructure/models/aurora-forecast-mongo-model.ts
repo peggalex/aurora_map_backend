@@ -1,10 +1,12 @@
 import { UUID } from "crypto";
-import { AuroraGeoJson } from "../../domain/value-objects/aurora-geojson";
 import { Document } from "mongodb";
 
+export type LongLatStr = `${number},${number}`;
 export interface AuroraForecastMongoModel extends Document {
 	id: UUID;
 	forecastTime: Date;
 	observationTime: Date;
-	geoJson: AuroraGeoJson;
+	coordinateToAuroraChance: {
+		[key: LongLatStr]: number;
+	};
 }
