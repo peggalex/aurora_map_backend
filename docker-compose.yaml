@@ -1,28 +1,29 @@
 services: # services which our app going to use. (list of containers we want to create)
-    mongo: # container name
-        image: mongo # which image container will build on
-        ports:
-            - "27017:27017"
-        networks: # adding network
-            - mern-app
-        volumes:
-            - mongo-data:/data/db
+  mongo: # container name
+    image: mongo # which image container will build on
+    ports:
+      - "27018:27017"
+    networks: # adding network
+      - mern-app
+    volumes:
+      - mongo-data:/data/db
 
-    api-server:
-        build: . # build the Docker image for the service using the Dockerfile located in the current directory
-        ports:
-            - "9000:3000"
-        networks: # adding network
-            - mern-app
-        depends_on:
-            - mongo
-        environment:
-            MONGO_CONNECTION_STR: "mongodb://mongo:27017"
+  api-server:
+    build: . # build the Docker image for the service using the Dockerfile located in the current directory
+    ports:
+      - "9000:3000"
+    networks: # adding network
+      - mern-app
+    depends_on:
+      - mongo
+    environment:
+      MONGO_CONNECTION_STR: "mongodb://mongo:27017"
+      WEATHER_API_KEY: ${WEATHER_API_KEY}
 
 networks: # allow services to talk to each other while providing isolation from other docker container, running on the same host
-    mern-app:
-        driver: bridge
+  mern-app:
+    driver: bridge
 
 volumes: # enable persistence of database data across container restart
-    mongo-data:
-        driver: local
+  mongo-data:
+    driver: local
